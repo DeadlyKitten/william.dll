@@ -1,62 +1,73 @@
-﻿using IPA;
-using IPA.Config;
-using IPA.Utilities;
+﻿using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using IPALogger = IPA.Logging.Logger;
+using TMPro;
+using System.Linq;
+using BepInEx;
 
 namespace william
 {
-    public class Plugin : IBeatSaberPlugin
+    [BepInPlugin("com.steven.nasb.william.gay", "william.dll", "2.0.0")]
+    public class Plugin : BaseUnityPlugin
     {
-        internal static Ref<PluginConfig> config;
-        internal static IConfigProvider configProvider;
+        internal static Plugin Instance;
 
-        public void Init(IPALogger logger, [Config.Prefer("json")] IConfigProvider cfgProvider)
+        public static Dictionary<int, float> offsets;
+        public static Shader shader;
+
+        public static TextMeshPro fontAsset;
+
+        public void Awake()
         {
-            Logger.log = logger;
-            configProvider = cfgProvider;
-
-            config = cfgProvider.MakeLink<PluginConfig>((p, v) =>
+            if (Instance)
             {
-                if (v.Value == null || v.Value.RegenerateConfig)
-                    p.Store(v.Value = new PluginConfig() { RegenerateConfig = false });
-                config = v;
-            });
+                DestroyImmediate(this);
+                return;
+            }
+            Instance = this;
+
+            offsets = new Dictionary<int, float>();
+            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
         }
 
-        public void OnApplicationStart()
+        public void Start()
         {
-            Logger.log.Debug("OnApplicationStart");
+            GetFont();
+
+            Logger.LogDebug("Applying Harmony Patches");
+            try
+            {
+                var harmony = new Harmony("com.steven.beatsaber.william.gay");
+                harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+                Logger.LogInfo("william gay");
+            }
+            catch (Exception e)
+            {
+                Logger.LogError($"{e.Message}\n{e.StackTrace}");
+            }
         }
 
-        public void OnApplicationQuit()
+        public void GetFont()
         {
-            Logger.log.Debug("OnApplicationQuit");
+            var bundle = AssetBundle.LoadFromStream(Assembly.GetCallingAssembly().GetManifestResourceStream("william.resources.comicsans"));
+            var prefab = bundle.LoadAsset<GameObject>("Assets/Text.prefab");
+            fontAsset = prefab?.GetComponent<TextMeshPro>();
         }
 
-        public void OnFixedUpdate()
-        {
+        public void OnApplicationQuit() { }
 
-        }
+        public void OnFixedUpdate() { }
 
-        public void OnUpdate()
-        {
+        public void OnUpdate() { }
 
-        }
+        public void OnActiveSceneChanged(Scene prevScene, Scene nextScene) { }
 
-        public void OnActiveSceneChanged(Scene prevScene, Scene nextScene)
-        {
+        public void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode) { }
 
-        }
-
-        public void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
-        {
-
-        }
-
-        public void OnSceneUnloaded(Scene scene)
-        {
-
-        }
+        public void OnSceneUnloaded(Scene scene) { }
     }
 }

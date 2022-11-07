@@ -1,10 +1,16 @@
 ﻿{
   "$schema": "https://raw.githubusercontent.com/nike4613/ModSaber-MetadataFileSchema/master/Schema.json",
-  "author": "",
-  "description": "",
-  "gameVersion": "0.12.2",
-  "id": null,
+  "author": "Steven 🎀",
+  "description": [
+    "william gay",
+    "=================",
+    "",
+    "Icon made by [Klouder](https://twitch.tv/klouderrr)"
+  ],
+  "gameVersion": "1.6.2",
+  "id": "william gay",
   "name": "william",
-  "version": "0.0.1-alpha",
+  "icon": "william.resources.williamgay.png",
+  "version": "2.0.2",
   "features": []
 }
